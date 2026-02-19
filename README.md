@@ -145,6 +145,20 @@ synapse-monorepo/
 - **Dual Database Architecture**: Optimized for both persistence and real-time performance
 
 ---
+##  Technical Decisions & Learnings
+
+**Why Dual Database (MongoDB + Firestore)?**
+- MongoDB: Stores user permissions, canvas metadata, collaboration requests
+- Firestore: Real-time collaborative state with <100ms sync
+- Trade-off: Added complexity, but optimized for both persistence and live collaboration
+
+**Conflict Resolution Challenge**
+Race conditions when 10+ users edit simultaneously. Solved with last-write-wins + Firestore timestamps + optimistic UI updates.
+
+**Why Serverless (Netlify Functions)?**
+Auto-scaling without managing servers, but required stateless API design and cold start optimization.
+
+---
 
 ## 🛠️ **Technology Stack**
 
