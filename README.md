@@ -15,7 +15,7 @@
 ---
 
 ## **Project Overview**
-# *Synapse is a collaborative canvas with real-time sync, AI insights, and secure invite-based sharing*.
+## **Synapse is a collaborative canvas with real-time sync, AI insights, and secure invite-based sharing**.
 
 ## **Real-Time Collaboration Demo**
 
