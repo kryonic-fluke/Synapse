@@ -15,14 +15,14 @@
 ---
 
 ## **Project Overview**
-Synapse is a collaborative canvas with real-time sync, AI insights, and secure invite-based sharing.
+## **Synapse is a collaborative canvas with real-time sync, AI insights, and secure invite-based sharing**.
 
 ## **Real-Time Collaboration Demo**
 
 
 ![Real-time Collaboration](docs/gifs/realtime.gif)
 
-## **Multi-user simultaneous editing → Live drag & drop → Text updates → Node resizing → All synchronized instantly with 100ms latency**
+## **Multi-user simultaneous editing → Live drag & drop → Text updates → Node resizing → All synchronized instantly with 50ms latency**
 
 ### **Key Problem Solved**
 - **Before Synapse**: Ideas scattered across multiple tools, poor collaboration, lack of project intelligence
@@ -35,6 +35,16 @@ Synapse is a collaborative canvas with real-time sync, AI insights, and secure i
 [Live Demo](https://synapse-workspace.netlify.app) 
 
 ---
+
+## **Performance & Scale**
+
+- **Real-time Updates**: Sub-50ms synchronization across clients
+- **Serverless Architecture**: Auto-scaling based on demand
+- **Optimized Database**: Dual-database strategy for performance and consistency
+- **Modern Stack**: Built with latest React 19 and TypeScript for maintainability
+
+---
+
 ##  **Complete Workflow Demonstration**
 
 *Experience the full collaborative journey from canvas creation to real-time editing*
@@ -135,6 +145,20 @@ synapse-monorepo/
 - **Dual Database Architecture**: Optimized for both persistence and real-time performance
 
 ---
+##  Technical Decisions & Learnings
+
+**Why Dual Database (MongoDB + Firestore)?**
+- MongoDB: Stores user permissions, canvas metadata, collaboration requests
+- Firestore: Real-time collaborative state with <100ms sync
+- Trade-off: Added complexity, but optimized for both persistence and live collaboration
+
+**Conflict Resolution Challenge**
+Race conditions when 10+ users edit simultaneously. Solved with last-write-wins + Firestore timestamps + optimistic UI updates.
+
+**Why Serverless (Netlify Functions)?**
+Auto-scaling without managing servers, but required stateless API design and cold start optimization.
+
+---
 
 ## 🛠️ **Technology Stack**
 
@@ -165,7 +189,7 @@ This is the recommended way to run the project for local development.
 
 2.  **Clone the Repository**
     ```bash
-    git clone https://github.com/yourusername/synapse
+    git clone https://github.com/kryonic-fluke/synapse
     cd synapse
     ```
 
@@ -202,7 +226,7 @@ If you prefer not to use Docker, you can run the project natively on your machin
 
 2.  **Clone and Install Dependencies**
     ```bash
-    git clone https://github.com/yourusername/synapse
+    git clone https://github.com/kryonic-fluke/synapse
     cd synapse
     npm install
     ```
@@ -227,14 +251,6 @@ If you prefer not to use Docker, you can run the project natively on your machin
 
 ---
 
-## **Performance & Scale**
-
-- **Real-time Updates**: Sub-100ms synchronization across clients
-- **Serverless Architecture**: Auto-scaling based on demand
-- **Optimized Database**: Dual-database strategy for performance and consistency
-- **Modern Stack**: Built with latest React 19 and TypeScript for maintainability
-
----
 
 
 ## 👤 **Author**
