@@ -16,10 +16,10 @@ const getNodeText = (node: Node): string => {
 };
 
 export async function categorizeNodeAPI(nodesToCategorize: Node[]) {
-  const HF_TOKEN = import.meta.env.VITE_HF_TOKEN;
-  const API_URL =
-    "https://api-inference.huggingface.co/models/facebook/bart-large-mnli";
-  const categories = [
+  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`;
+
+ const categories = [
     "Bug Report",
     "Feature Request",
     "Question",
@@ -41,20 +41,27 @@ export async function categorizeNodeAPI(nodesToCategorize: Node[]) {
 
   const promises = validNodes.map(async (node) => {
     try {
-      const textToClassify = getNodeText(node);
+      const text = getNodeText(node);
 
-      const response = await axios.post(
-        API_URL,
-        {
-          inputs: textToClassify,
-          parameters: { candidate_labels: categories },
-        },
-        { headers: { Authorization: `Bearer ${HF_TOKEN}` } }
-      );
+      const response = await axios.post(API_URL, {
+        contents: [
+          {
+            parts: [
+              {
+                text: `Classify this text into exactly one category. Reply with only the category name, nothing else.\n\nCategories: ${categories.join(", ")}\n\nText: "${text}"`,
+              },
+            ],
+          },
+        ],
+      });
 
-      const topCategory = response.data.labels[0];
+      const category =
+        response.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
-      return { nodeId: node.id, category: topCategory };
+      return {
+        nodeId: node.id,
+        category: categories.includes(category) ? category : null,
+      };
     } catch (error) {
       console.error(`Failed to categorize node ${node.id}:`, error);
       return { nodeId: node.id, category: null };
@@ -62,6 +69,6 @@ export async function categorizeNodeAPI(nodesToCategorize: Node[]) {
   });
 
   const results = await Promise.all(promises);
-
   return results.filter((result) => result.category !== null);
 }
+

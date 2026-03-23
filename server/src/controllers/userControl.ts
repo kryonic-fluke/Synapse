@@ -4,8 +4,8 @@ import { AuthentucatedRequestCheck } from "../middleware/authMiddleWare";
 
 export const createOrUpdateUser = async (req: AuthentucatedRequestCheck, res: Response) => {
   try {
-    console.log(" MIDDLEWARE RESULT DEBUG:");
-    console.log("req.user:", req.user);
+    // console.log(" MIDDLEWARE RESULT DEBUG:");
+    // console.log("req.user:", req.user);
    
     
     const firebaseUid = req.user?.uid;

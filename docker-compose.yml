@@ -12,8 +12,7 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/serviceAccountKey.json
      
     env_file:
-      - ./server/.env
-
+      - ./server/.env 
   client:
     build: ./client
     ports:

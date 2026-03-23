@@ -23,7 +23,7 @@ export const createCanvas = async (req: Request, res: Response) => {
     const inviteToken = crypto.randomBytes(16).toString("hex");
 
     const newCanvas = await Canvas.create({
-      name: canvasName || "Untitled Canvas",
+      name: canvasName ,
       owner: user._id,
       collaborators: [user._id],
       inviteToken: inviteToken,
@@ -50,7 +50,7 @@ export const createCanvas = async (req: Request, res: Response) => {
       .collection("pendingRequests")
       .doc("_init")
       .set({ initialized: true });
-    console.log("Firestore document created successfully.");
+    // console.log("Firestore document created successfully.");
 
     res.status(201).json(newCanvas);
   } catch (error) {
@@ -81,9 +81,9 @@ export const requestAccess = async (req: Request, res: Response) => {
 
   const requestingFirebaseUid = req.user!.uid;
 
-  console.log(
-    `Received access request for canvas ${_id} by user ${requestingFirebaseUid}`
-  );
+  // console.log(
+  //   `Received access request for canvas ${_id} by user ${requestingFirebaseUid}`,
+  // );
 
   try {
     const canvas = await Canvas.findById(_id);
@@ -125,7 +125,7 @@ export const requestAccess = async (req: Request, res: Response) => {
     });
 
     console.log(
-      `Successfully created pending request for user ${requestingUser._id} on canvas ${_id}`
+      `Successfully created pending request for user ${requestingUser._id} on canvas ${_id}`,
     );
     res.status(200).json({ message: "Access request sent successfully." });
   } catch (error) {
@@ -166,12 +166,12 @@ export const approveRequest = async (req: Request, res: Response) => {
 
     await Canvas.updateOne(
       { _id: canvasId },
-      { $addToSet: { collaborators: userToApprove._id } }
+      { $addToSet: { collaborators: userToApprove._id } },
     );
 
     await User.updateOne(
       { _id: userToApprove._id },
-      { $addToSet: { joinedCanvases: canvasId } }
+      { $addToSet: { joinedCanvases: canvasId } },
     );
 
     const requestDocRef = firestoreDb
@@ -191,7 +191,7 @@ export const approveRequest = async (req: Request, res: Response) => {
 };
 
 export const declineRequest = async (req: Request, res: Response) => {
-  const { _id: canvasId } = req.params; 
+  const { _id: canvasId } = req.params;
   const { userIdToDecline } = req.body;
   const ownerFirebaseUid = req.user?.uid;
 
@@ -274,7 +274,7 @@ export const deleteCanvas = async (req: Request, res: Response) => {
         "Authorization failed. Canvas owner:",
         canvas.owner.toString(),
         "User ID:",
-        user._id.toString()
+        user._id.toString(),
       );
       return res
         .status(403)
@@ -295,41 +295,36 @@ export const deleteCanvas = async (req: Request, res: Response) => {
   }
 };
 
-
 export const removeContributor = async (req: Request, res: Response) => {
+  try {
+    const { _id, userId: userIdToRemove } = req.params;
 
-  try{
-  const { _id, userId: userIdToRemove } = req.params;
-
-console.log("\n--- Received request to remove contributor ---");
-  console.log("Canvas ID received from URL:", _id);
-  console.log("Firebase UID received from URL:", userIdToRemove);
-   const userToRemove = await User.findOne({ firebaseUid: userIdToRemove });
-      const canvas = await Canvas.findById(_id);
+    // console.log("\n--- Received request to remove contributor ---");
+    // console.log("Canvas ID received from URL:", _id);
+    // console.log("Firebase UID received from URL:", userIdToRemove);
+    const userToRemove = await User.findOne({ firebaseUid: userIdToRemove });
+    const canvas = await Canvas.findById(_id);
 
     if (!canvas || !userToRemove) {
       return res.status(404).json({ message: "Canvas or user not found." });
     }
 
-        const mongoUserIdToRemove = userToRemove._id;
+    const mongoUserIdToRemove = userToRemove._id;
 
+    await Canvas.updateOne(
+      { _id: _id },
 
-  await Canvas.updateOne(
-    { _id: _id },
-    
-    { $pull: { collaborators: mongoUserIdToRemove} }
-  );
+      { $pull: { collaborators: mongoUserIdToRemove } },
+    );
 
-await User.updateOne(
-  { _id: userToRemove._id }, 
-  { $pull: { joinedCanvases: _id } } 
-);
+    await User.updateOne(
+      { _id: userToRemove._id },
+      { $pull: { joinedCanvases: _id } },
+    );
 
-res.status(200).json({ message: "Contributor removed successfully." });
-  }
-
-  catch (error) {
+    res.status(200).json({ message: "Contributor removed successfully." });
+  } catch (error) {
     console.error("Error removing contributor:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
