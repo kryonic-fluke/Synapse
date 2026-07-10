@@ -38,8 +38,8 @@
 
 ## **Performance & Scale**
 
-- **Real-time Updates**: Sub-50ms synchronization across clients
-- **Serverless Architecture**: Auto-scaling based on demand
+- **Real-time Updates**: Near-instant multi-client synchronization via Firestore listeners
+- **Serverless Architecture**: Hybrid Architecture: Serverless frontend (Netlify) and real-time layer (Firestore) with a dedicated Express/MongoDB backend
 - **Optimized Database**: Dual-database strategy for performance and consistency
 - **Modern Stack**: Built with latest React 19 and TypeScript for maintainability
 
